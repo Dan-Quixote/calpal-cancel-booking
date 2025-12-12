@@ -1,0 +1,9 @@
+name = "dqx-cf-worker-calpal-cancel-booking"
+main = "index.js"
+compatibility_date = "2025-12-12"
+
+[env.production]
+name = "dqx-cf-worker-calpal-cancel-booking"
+
+[env.staging]
+name = "dqx-cf-worker-calpal-cancel-booking-staging"

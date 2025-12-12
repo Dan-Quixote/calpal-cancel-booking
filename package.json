@@ -1,0 +1,23 @@
+{
+  "name": "dqx-cf-worker-calpal-cancel-booking",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for Cal.com booking management - find and cancel bookings via API",
+  "main": "index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production"
+  },
+  "keywords": [
+    "cloudflare-worker",
+    "cal.com",
+    "booking",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
