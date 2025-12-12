@@ -109,3 +109,19 @@ In your Retell dashboard, create a **Custom Function** for each tool below.
   ]
 }
 ```
+
+---
+
+## 🔒 Privacy & Security
+
+This code acts as a **Pass-Through Proxy**:
+
+* **Stateless:** It processes the request and immediately forgets it.
+* **No Storage:** It does not save your API Keys, Booking IDs, or User Emails to any database.
+* **Direct Connection:** Data flows strictly Retell → Worker → Cal.com via HTTPS.
+
+---
+
+## 📄 License
+
+This project is open-source and available under the MIT License. Feel free to fork and modify it for your own community.
