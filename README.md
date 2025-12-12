@@ -35,7 +35,7 @@ It solves the "404 Not Found" errors without you needing to sign up for paid too
 3.  Name it `calpalworker` (or anything you like) and click **Deploy**.
 4.  Click **Edit Code**.
 5.  Delete the existing "Hello World" code.
-6.  Copy the code from the `worker.js` file in this repository and paste it in.
+6.  Copy the code from the `index.js` file in this repository and paste it in.
 7.  Click **Deploy** again.
 8.  **Copy your Worker URL** (it will look like `https://calpalworker.your-name.workers.dev`).
 
@@ -77,3 +77,35 @@ In your Retell dashboard, create a **Custom Function** for each tool below.
     "email"
   ]
 }
+```
+
+#### Function 2: Cancel Booking
+*Name this function `cancel_booking`. This executes the cancellation.*
+
+* **Function URL:** Paste your Cloudflare Worker URL (same as above).
+* **Parameters:** Copy/Paste this JSON:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "const": "cancel_booking",
+      "description": "Fixed action identifier for the worker."
+    },
+    "cancellationReason": {
+      "type": "string",
+      "description": "The reason for cancellation (e.g., 'User requested')."
+    },
+    "bookingUid": {
+      "type": "string",
+      "description": "The unique bookingUid of the booking to cancel (retrieved from get_all_bookings)."
+    }
+  },
+  "required": [
+    "action",
+    "bookingUid"
+  ]
+}
+```
