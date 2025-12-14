@@ -1,19 +1,27 @@
 # 🤖 Cal Pal (CloudFlare) Worker (Retell AI ↔ Cal.com Bridge)
 
-A free, secure, and simple tool to connect your **Retell AI Voice Agents** to your **Cal.com** calendar.
+A free, secure, and simple tool to connect your **Retell AI Voice Agents** to your **Cal.com** calendar for complete booking lifecycle management.
 
 ## 🧐 What is this and why do I need it?
 
-If you try to connect Retell AI directly to Cal.com to cancel bookings, it will fail. This is because Cal.com requires the Booking ID to be part of the website address (URL), but Retell sends it inside the data package (Body). They are speaking different languages.
+If you try to connect Retell AI directly to Cal.com for booking operations, it will fail. This is because Cal.com's API v2 has specific requirements that don't match Retell's function calling format.
 
-**"Cal Pal" acts as a translator.**
+**"Cal Pal" acts as a intermediary.**
 
 1.  **Retell** sends the data to this Worker.
-2.  **This Worker** instantly translates it into the correct format for Cal.com.
-3.  **Cal.com** processes the cancellation or search.
+2.  **This Worker** instantly translates it into the correct format for Cal.com API v2.
+3.  **Cal.com** processes the booking operation (search, create, cancel, or reschedule).
 4.  The result is sent back to your AI agent.
 
-It solves the "404 Not Found" errors without you needing to sign up for paid tools like Zapier, Make, or n8n.
+It solves API integration issues without you needing to sign up for paid tools like Zapier, Make, or n8n.
+
+## ✨ Features
+
+- **Search Bookings**: Find upcoming bookings by email OR phone number
+- **Create Bookings**: Schedule new appointments
+- **Cancel Bookings**: Cancel existing appointments with reason tracking
+- **Reschedule Bookings**: Move appointments to new times
+- **Phone Number Support**: Search bookings using phone numbers in E.164 format
 
 ---
 
@@ -23,105 +31,85 @@ It solves the "404 Not Found" errors without you needing to sign up for paid too
 
 * **No Data Storage:** This worker is "stateless." It processes your request in milliseconds and immediately forgets it. It does not save your API Keys, customer emails, or booking details to any database.
 * **Encrypted:** All data travels securely over HTTPS (the same standard used by banks).
-* **Open Source:** The code is public (in `index.js`) so you (or a developer friend) can verify exactly what it does. nothing is hidden.
+* **Open Source:** The code is public (in `index_v2.js`) so you (or a developer friend) can verify exactly what it does. Nothing is hidden.
 
 ---
 
-## ⚙️ Setup Guide (3 Steps)
+## ⚙️ Setup Guide
 
-### Step 1: Create the Cloudflare Worker (Free)
-1.  Go to [Cloudflare Workers](https://dash.cloudflare.com/) and sign up (the free tier is plenty).
-2.  Click **Create Worker**.
-3.  Name it `calpalworker` (or anything you like) and click **Deploy**.
-4.  Click **Edit Code**.
-5.  Delete the existing "Hello World" code.
-6.  Copy the code from the `index.js` file in this repository and paste it in.
-7.  Click **Deploy** again.
-8.  **Copy your Worker URL** (it will look like `https://calpalworker.your-name.workers.dev`).
 
-### Step 2: Configure Retell AI
-In your Retell dashboard, create a **Custom Function** for each tool below.
+Your worker will be available at `https://calpal-cancel-booking.tight-violet-f167.workers.dev/` (or your custom subdomain).
 
-**Important:** For both functions, scroll down to the **"Headers"** section in Retell and add this single key:
+### Step 2: Configure Retell AI Functions
+
+In your Retell dashboard, create a **Custom Function** for each action you need.
+
+**Important:** For all functions, add this header in Retell's "Headers" section:
 
 | Key | Value |
 | :--- | :--- |
-| `X-Cal-Api-Key` | `cal_live_xxxxxxxx...` (Your actual Cal.com API Key) |
+| `X-Cal-Api-Key` | `cal_live_xxxxxxxx...` (Your Cal.com API Key) |
 
-*(Note: You do not need to add Content-Type or API-Version headers; the Worker handles those for you automatically!)*
+### Step 3: Add Function Definitions
 
-### Step 3: Copy these Function Definitions
+For each function, use the **same Worker URL** but different schemas. Find complete schemas in the `retell-schemas/` directory.
 
-#### Function 1: Find Bookings
-*Name this function `get_all_bookings`. This finds the booking before cancelling it.*
-
-* **Function URL:** Paste your Cloudflare Worker URL.
-* **Parameters:** Copy/Paste this JSON:
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "action": {
-      "type": "string",
-      "const": "find_bookings",
-      "description": "Fixed action identifier for the worker."
-    },
-    "email": {
-      "type": "string",
-      "description": "The email address of the attendee to find bookings for."
-    }
-  },
-  "required": [
-    "action",
-    "email"
-  ]
-}
-```
+#### Function 1: Search Bookings
+- **Name:** `get_all_bookings`
+- **Description:** Search for upcoming bookings by email or phone number
+- **URL:** Your Worker URL
+- **Schema:** See `retell-schemas/get_all_bookings.json`
 
 #### Function 2: Cancel Booking
-*Name this function `cancel_booking`. This executes the cancellation.*
+- **Name:** `cancel_booking`
+- **Description:** Cancel an existing booking by UID
+- **URL:** Your Worker URL
+- **Schema:** See `retell-schemas/cancel_booking.json`
 
-* **Function URL:** Paste your Cloudflare Worker URL (same as above).
-* **Parameters:** Copy/Paste this JSON:
+#### Function 3: Reschedule Booking
+- **Name:** `reschedule_booking`
+- **Description:** Reschedule an existing booking to a new time
+- **URL:** Your Worker URL
+- **Schema:** See `retell-schemas/reschedule_booking.json`
 
-```json
-{
-  "type": "object",
-  "properties": {
-    "action": {
-      "type": "string",
-      "const": "cancel_booking",
-      "description": "Fixed action identifier for the worker."
-    },
-    "cancellationReason": {
-      "type": "string",
-      "description": "The reason for cancellation (e.g., 'User requested')."
-    },
-    "bookingUid": {
-      "type": "string",
-      "description": "The unique bookingUid of the booking to cancel (retrieved from get_all_bookings)."
-    }
-  },
-  "required": [
-    "action",
-    "bookingUid"
-  ]
-}
-```
+#### Function 4: Create Booking
+- **Name:** `create_booking`
+- **Description:** Create a new booking/appointment
+- **URL:** Your Worker URL
+- **Schema:** See `retell-schemas/create_booking.json`
+
+**Note:** All schemas include an `action` field with a `const` value. Retell sends this in a nested `args` structure, which the worker handles automatically.
 
 ---
 
-## 🔒 Privacy & Security
+## 🔧 Technical Details
 
-This code acts as a **Pass-Through Proxy**:
+### Request Structure
+Retell sends function calls in this format:
+```json
+{
+  "call": { /* call metadata */ },
+  "name": "get_all_bookings",
+  "args": {
+    "action": "get_all_bookings",
+    "phoneNumber": "+15551234567"
+  }
+}
+```
 
-* **Stateless:** It processes the request and immediately forgets it.
-* **No Storage:** It does not save your API Keys, Booking IDs, or User Emails to any database.
-* **Direct Connection:** Data flows strictly Retell → Worker → Cal.com via HTTPS.
+The worker automatically extracts parameters from `data.args` or falls back to top-level `data` for compatibility.
+
+### Cal.com API Version
+This worker uses Cal.com API v2 with version header `2024-08-13`. If Cal.com updates their API, you may need to update:
+- Booking response structure parsing
+- API endpoint URLs
+- Required headers
+
+### Phone Number Format
+Phone numbers must be in E.164 format (e.g., `+15551234567`). The worker normalizes phone numbers when searching to handle different formats stored in Cal.com.
 
 ---
 
 ## 📄 License
 
-This project is open-source and available under the MIT License. Feel free to fork and modify it for your own community.
+This project is open-source and available under the MIT License. Feel free to fork and modify it for your own use.

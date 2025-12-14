@@ -26,3 +26,18 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# Development/Documentation files
+CLAUDE.md
+check_availability.md
+index.js
+retell_prompt.md
+retell_example_schemas.md
+function_jsons.md
+hairdresser_prompt.md
+hairdresser_updated.md
+hairdresser.md
+IMPLEMENTATION_PLAN.md
+package.json
+wrangler.toml
+.claude/

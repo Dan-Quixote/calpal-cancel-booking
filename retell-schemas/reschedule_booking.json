@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "const": "reschedule_booking",
+      "description": "Fixed action identifier for routing"
+    },
+    "bookingUid": {
+      "type": "string",
+      "description": "The unique identifier (UID) of the booking to reschedule. Obtained from the get_all_bookings response."
+    },
+    "newStartTime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The new start time for the booking in ISO 8601 format with timezone (e.g., 2025-12-19T15:00:00Z)"
+    },
+    "reschedulingReason": {
+      "type": "string",
+      "description": "Optional reason for rescheduling (e.g., 'Customer requested new time', 'Original time no longer available')"
+    }
+  },
+  "required": ["action", "bookingUid", "newStartTime"]
+}

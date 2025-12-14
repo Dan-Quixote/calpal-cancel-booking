@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "const": "cancel_booking",
+      "description": "Fixed action identifier for routing"
+    },
+    "bookingUid": {
+      "type": "string",
+      "description": "The unique identifier (UID) of the booking to cancel. Obtained from the get_all_bookings response."
+    },
+    "cancellationReason": {
+      "type": "string",
+      "description": "Optional reason for the cancellation (e.g., 'Customer requested cancellation', 'Schedule conflict'). Defaults to 'User requested cancellation via Voice AI' if not provided."
+    }
+  },
+  "required": ["action", "bookingUid"]
+}

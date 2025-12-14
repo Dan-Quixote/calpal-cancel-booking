@@ -1,0 +1,54 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "const": "create_booking",
+      "description": "Fixed action identifier for routing"
+    },
+    "eventTypeId": {
+      "type": "integer",
+      "description": "The Cal.com event type ID for the service being booked (e.g., 123456 for a specific appointment type)"
+    },
+    "startTime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The start time of the booking in ISO 8601 format with timezone (e.g., 2025-12-18T14:00:00Z)"
+    },
+    "attendeeName": {
+      "type": "string",
+      "description": "Full name of the customer making the booking"
+    },
+    "attendeePhone": {
+      "type": "string",
+      "pattern": "^\\+[1-9]\\d{1,14}$",
+      "description": "Customer's phone number in E164 format (e.g., +15551234567). Required for booking."
+    },
+    "attendeeEmail": {
+      "type": "string",
+      "format": "email",
+      "description": "Email address of the customer making the booking. Optional - if not provided, system will auto-generate from phone number."
+    },
+    "timezone": {
+      "type": "string",
+      "description": "IANA timezone string for the booking (e.g., America/New_York, Europe/London). Defaults to UTC if not provided."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional custom fields for the booking (e.g., {\"serviceType\": \"Haircut\", \"notes\": \"First time customer\"})"
+    },
+    "guests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "email"
+      },
+      "description": "Optional list of additional guest email addresses to invite to the booking"
+    },
+    "lengthInMinutes": {
+      "type": "integer",
+      "description": "Optional duration of the booking in minutes. If not provided, uses the event type's default duration."
+    }
+  },
+  "required": ["action", "eventTypeId", "startTime", "attendeeName", "attendeePhone"]
+}
